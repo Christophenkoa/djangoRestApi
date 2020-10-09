@@ -13,11 +13,22 @@ from rest_framework.views import APIView
 from rest_framework import generics
 from rest_framework import mixins
 
+# ViewSet
+from rest_framework import viewsets
+from django.shortcuts import get_object_or_404
+
+# authentication
+from rest_framework.authentication import SessionAuthentication, BasicAuthentication, TokenAuthentication
+from rest_framework.permissions import IsAuthenticated
+
 from .models import Article
 from .serializers import ArticleSerializer
 
 
 # Create your views here.
+
+# viewset
+
 
 # Generic class view
 class GenericAPIView(generics.GenericAPIView, mixins.ListModelMixin,
@@ -25,6 +36,9 @@ class GenericAPIView(generics.GenericAPIView, mixins.ListModelMixin,
                      mixins.RetrieveModelMixin, mixins.DestroyModelMixin):
     serializer_class = ArticleSerializer
     queryset = Article.objects.all()
+    # authentication_classes = [SessionAuthentication, BasicAuthentication]
+    authentication_classes = [TokenAuthentication]
+    permission_classes = [IsAuthenticated]
 
     lookup_field = 'id'
 
@@ -42,6 +56,7 @@ class GenericAPIView(generics.GenericAPIView, mixins.ListModelMixin,
 
     def delete(self, request, id=None):
         return self.destroy(request, id)
+
 
 # class basic view
 class ArticleAPIView(APIView):
